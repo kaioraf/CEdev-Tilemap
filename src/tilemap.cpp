@@ -30,7 +30,7 @@ extern unsigned char mainMenu_map[];
 #define mainMenu_DRAW_WIDTH 7
 #define mainMenu_DRAW_HEIGHT 9
 
-#define snowLevel1_Y_OFFSET 16
+#define snowLevel1_Y_OFFSET 0
 #define snowLevel1_X_OFFSET 0
 
 #define mainMenu_Y_OFFSET 32
@@ -291,7 +291,7 @@ void ConvertSpritePosition(Tilemap *snowLevel_1, Sprite *PlayerSprite)
 void DrawStatusText(Tilemap *snowLevel_1, Sprite *PlayerSprite ,clock_t timeSincelastUpdate)
 {
     uint8_t block_mapped, block_ptr;
-    gfx_FillRectangle(0, 0, 320, 16);
+    // gfx_FillRectangle(0, 0, 320, 16);
     gfx_PrintStringXY("x:", 8, 4);
     gfx_PrintInt(snowLevel_1->x, 3);
     gfx_PrintString(" y:");
