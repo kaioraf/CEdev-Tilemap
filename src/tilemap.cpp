@@ -39,7 +39,7 @@ extern unsigned char mainMenu_map[];
 #define mainMenuItemCount 3
 
 #define PLAYER_START_X GFX_LCD_WIDTH  / 2
-#define PLAYER_START_Y GFX_LCD_HEIGHT / 2
+#define PLAYER_START_Y (GFX_LCD_HEIGHT - Player_height) / 2
 
 gfx_UninitedSprite(playerBackground, Player_width, Player_height);
 gfx_UninitedSprite(flippedPlayer, Player_width, Player_height);
@@ -291,7 +291,7 @@ void ConvertSpritePosition(Tilemap *snowLevel_1, Sprite *PlayerSprite)
 void DrawStatusText(Tilemap *snowLevel_1, Sprite *PlayerSprite ,clock_t timeSincelastUpdate)
 {
     uint8_t block_mapped, block_ptr;
-    // gfx_FillRectangle(0, 0, 320, 16);
+    gfx_FillRectangle(0, 0, 320, 16);
     gfx_PrintStringXY("x:", 8, 4);
     gfx_PrintInt(snowLevel_1->x, 3);
     gfx_PrintString(" y:");
