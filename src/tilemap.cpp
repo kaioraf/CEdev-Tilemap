@@ -38,8 +38,8 @@ extern unsigned char mainMenu_map[];
 
 #define mainMenuItemCount 3
 
-#define PLAYER_START_X ((GFX_LCD_WIDTH - Player_width) / 2)
-#define PLAYER_START_Y ((GFX_LCD_HEIGHT - Player_height) / 2)
+#define PLAYER_START_X GFX_LCD_WIDTH  / 2
+#define PLAYER_START_Y GFX_LCD_HEIGHT / 2
 
 gfx_UninitedSprite(playerBackground, Player_width, Player_height);
 gfx_UninitedSprite(flippedPlayer, Player_width, Player_height);
