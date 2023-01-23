@@ -30,7 +30,7 @@ extern unsigned char mainMenu_map[];
 #define mainMenu_DRAW_WIDTH 7
 #define mainMenu_DRAW_HEIGHT 9
 
-#define snowLevel1_Y_OFFSET 0
+#define snowLevel1_Y_OFFSET 16
 #define snowLevel1_X_OFFSET 0
 
 #define mainMenu_Y_OFFSET 32
