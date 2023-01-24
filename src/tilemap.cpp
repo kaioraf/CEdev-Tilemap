@@ -11,15 +11,16 @@
 #include "gfx/gfx.h"
 
 /* Include the external tilemap data */
-extern unsigned char tilemap_map[];
+// extern unsigned char tilemap_map[];
+extern unsigned char snowLevel_1_map[];
 extern unsigned char mainMenu_map[];
 
 /* Tilemap defines */
 #define TILE_WIDTH 16
 #define TILE_HEIGHT 16
 
-#define snowLevel1_WIDTH 30
-#define snowLevel1_HEIGHT 20
+#define snowLevel1_WIDTH 40
+#define snowLevel1_HEIGHT 30
 
 #define mainMenu_WIDTH 7
 #define mainMenu_HEIGHT 9
@@ -507,7 +508,7 @@ int main(void)
 
     GraphxSetup();
 
-    Tilemap *snowLevel_1 = new Tilemap(tilemap_map, snowSet1_tiles, gfx_tile_16_pixel, TILE_HEIGHT, snowLevel1_DRAW_WIDTH, snowLevel1_DRAW_HEIGHT, snowLevel1_HEIGHT, snowLevel1_WIDTH, snowLevel1_X_OFFSET, snowLevel1_Y_OFFSET);
+    Tilemap *snowLevel_1 = new Tilemap(snowLevel_1_map, snowSet1_tiles, gfx_tile_16_pixel, TILE_HEIGHT, snowLevel1_DRAW_WIDTH, snowLevel1_DRAW_HEIGHT, snowLevel1_HEIGHT, snowLevel1_WIDTH, snowLevel1_X_OFFSET, snowLevel1_Y_OFFSET);
 
     playerBackground->width = Player_width;
     playerBackground->height = Player_height;
@@ -534,12 +535,12 @@ int main(void)
 
         kb_Scan();
         arrows = kb_Data[7];
-        input(arrows, snowLevel_1, PlayerSprite);
-        currentTile = ConvertSpritePosition(snowLevel_1, PlayerSprite);
+        // input(arrows, snowLevel_1, PlayerSprite);
+        // currentTile = ConvertSpritePosition(snowLevel_1, PlayerSprite);
 
         if (timeSinceLastUpdate > 1092) //update 30 times per second
         {
-            update(snowLevel_1 , PlayerSprite, timeSinceLastUpdate, currentTile);
+            // update(snowLevel_1 , PlayerSprite, timeSinceLastUpdate, currentTile);
             lastUpdate = clockTime;
 
             if (os_GetCSC() == sk_Mode) {menuOpen = true;}
