@@ -11,16 +11,15 @@
 #include "gfx/gfx.h"
 
 /* Include the external tilemap data */
-// extern unsigned char tilemap_map[];
-extern unsigned char snowLevel_1_map[];
+extern unsigned char tilemap_map[];
 extern unsigned char mainMenu_map[];
 
 /* Tilemap defines */
 #define TILE_WIDTH 16
 #define TILE_HEIGHT 16
 
-#define snowLevel1_WIDTH 40
-#define snowLevel1_HEIGHT 30
+#define snowLevel1_WIDTH 30
+#define snowLevel1_HEIGHT 20
 
 #define mainMenu_WIDTH 7
 #define mainMenu_HEIGHT 9
@@ -39,8 +38,8 @@ extern unsigned char mainMenu_map[];
 
 #define mainMenuItemCount 3
 
-#define PLAYER_START_X GFX_LCD_WIDTH  / 2
-#define PLAYER_START_Y (GFX_LCD_HEIGHT - Player_height) / 2
+#define PLAYER_START_X ((GFX_LCD_WIDTH - Player_width) / 2)
+#define PLAYER_START_Y ((GFX_LCD_HEIGHT - Player_height) / 2)
 
 gfx_UninitedSprite(playerBackground, Player_width, Player_height);
 gfx_UninitedSprite(flippedPlayer, Player_width, Player_height);
@@ -284,33 +283,12 @@ Menu::~Menu()
 {
 }
 
-bool isWalkable(int tileID)
+void ConvertSpritePosition(Tilemap *snowLevel_1, Sprite *PlayerSprite)
 {
-    switch (tileID)
-    {
-    case 21:
-    case 22:
-        return true;
-        break;
-    
-    default:
-        return false;
-        break;
-    }
+    gfx_Rectangle(PLAYER_START_X, PLAYER_START_Y, 16, 16);
 }
 
-int ConvertSpritePosition(Tilemap *snowLevel_1, Sprite *PlayerSprite)
-{
-    // int tilemapX = PLAYER_START_X / TILE_WIDTH;
-    // int tilemapY = PLAYER_START_Y / TILE_HEIGHT;
-    // gfx_GetTile(snowLevel_1, );
-    // gfx_TilePtrMapped();
-    int tileAtSpritePos = gfx_GetTile(&snowLevel_1->tilemap, snowLevel_1->x + PlayerSprite->x, snowLevel_1->y + PlayerSprite->y - 16);
-    return tileAtSpritePos;
-
-}
-
-void DrawStatusText(Tilemap *snowLevel_1, Sprite *PlayerSprite ,clock_t timeSincelastUpdate, int currentTile)
+void DrawStatusText(Tilemap *snowLevel_1, Sprite *PlayerSprite ,clock_t timeSincelastUpdate)
 {
     uint8_t block_mapped, block_ptr;
     gfx_FillRectangle(0, 0, 320, 16);
@@ -318,27 +296,15 @@ void DrawStatusText(Tilemap *snowLevel_1, Sprite *PlayerSprite ,clock_t timeSinc
     gfx_PrintInt(snowLevel_1->x, 3);
     gfx_PrintString(" y:");
     gfx_PrintInt(snowLevel_1->y, 3);
-    gfx_PrintString(" tile:");
-    gfx_PrintInt(currentTile, 3);
+    gfx_PrintString(" block:");
 
-    if (isWalkable(currentTile))
-    {
-        gfx_PrintInt(1, 1);
-    }
-    else
-    {
-        gfx_PrintInt(0, 1);
-    }
-    
-    // gfx_PrintString(" block:");
+    /* Or use gfx_GetTileMapped() and gfx_GetTile() */
+    block_mapped = *gfx_TilePtrMapped(&snowLevel_1->tilemap, snowLevel_1->x / TILE_WIDTH, snowLevel_1->y / TILE_HEIGHT);
+    block_ptr = *gfx_TilePtr(&snowLevel_1->tilemap, snowLevel_1->y, snowLevel_1->y);
 
-    // /* Or use gfx_GetTileMapped() and gfx_GetTile() */
-    // block_mapped = *gfx_TilePtrMapped(&snowLevel_1->tilemap, snowLevel_1->x / TILE_WIDTH, snowLevel_1->y / TILE_HEIGHT);
-    // block_ptr = *gfx_TilePtr(&snowLevel_1->tilemap, snowLevel_1->y, snowLevel_1->y);
-
-    // gfx_PrintUInt(block_mapped, 3);
-    // gfx_PrintString("/");
-    // gfx_PrintUInt(block_ptr, 3);
+    gfx_PrintUInt(block_mapped, 3);
+    gfx_PrintString("/");
+    gfx_PrintUInt(block_ptr, 3);
     gfx_PrintString("  ");
     gfx_PrintInt(CLOCKS_PER_SEC / timeSincelastUpdate, 3);
     gfx_PrintString(" x:");
@@ -347,14 +313,14 @@ void DrawStatusText(Tilemap *snowLevel_1, Sprite *PlayerSprite ,clock_t timeSinc
     gfx_PrintInt(PlayerSprite->y, 3);
 }
 
-void update(Tilemap *snowLevel1, Sprite *PlayerSprite, clock_t timeSinceLastUpdate, int currentTile)
+void update(Tilemap *snowLevel1, Sprite *PlayerSprite, clock_t timeSinceLastUpdate)
 {
     snowLevel1->Animate();
     gfx_Tilemap(&snowLevel1->tilemap, snowLevel1->x, snowLevel1->y);
     PlayerSprite->Animate();
     PlayerSprite->Draw();
 
-    DrawStatusText(snowLevel1, PlayerSprite ,timeSinceLastUpdate, currentTile);
+    DrawStatusText(snowLevel1, PlayerSprite ,timeSinceLastUpdate);
     gfx_SwapDraw();
 
 }
@@ -508,7 +474,7 @@ int main(void)
 
     GraphxSetup();
 
-    Tilemap *snowLevel_1 = new Tilemap(snowLevel_1_map, snowSet1_tiles, gfx_tile_16_pixel, TILE_HEIGHT, snowLevel1_DRAW_WIDTH, snowLevel1_DRAW_HEIGHT, snowLevel1_HEIGHT, snowLevel1_WIDTH, snowLevel1_X_OFFSET, snowLevel1_Y_OFFSET);
+    Tilemap *snowLevel_1 = new Tilemap(tilemap_map, snowSet1_tiles, gfx_tile_16_pixel, TILE_HEIGHT, snowLevel1_DRAW_WIDTH, snowLevel1_DRAW_HEIGHT, snowLevel1_HEIGHT, snowLevel1_WIDTH, snowLevel1_X_OFFSET, snowLevel1_Y_OFFSET);
 
     playerBackground->width = Player_width;
     playerBackground->height = Player_height;
@@ -526,7 +492,6 @@ int main(void)
     Menu *currentMenu[1];
     currentMenu[0] = mainMenu;
 
-    int currentTile;
     kb_key_t arrows;
     do
     {
@@ -535,14 +500,13 @@ int main(void)
 
         kb_Scan();
         arrows = kb_Data[7];
-        // input(arrows, snowLevel_1, PlayerSprite);
-        // currentTile = ConvertSpritePosition(snowLevel_1, PlayerSprite);
+
+        input(arrows, snowLevel_1, PlayerSprite);
 
         if (timeSinceLastUpdate > 1092) //update 30 times per second
         {
-            // update(snowLevel_1 , PlayerSprite, timeSinceLastUpdate, currentTile);
+            update(snowLevel_1 , PlayerSprite, timeSinceLastUpdate);
             lastUpdate = clockTime;
-
             if (os_GetCSC() == sk_Mode) {menuOpen = true;}
             while (menuOpen)
             {
