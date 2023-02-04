@@ -15,12 +15,16 @@ converts:
       images:
         - snowSet1.png
         - GUI.png
+      tile-width: 27
+      tile-height: 27
+      images:
+        - SwordMap.png
   - name: sprites
     palette: global_palette
     transparent-color-index: 0
     images:
       - Player.png
-      - Sword.png
+      - knightEnemy.png
 
 outputs:
   - type: c
