@@ -1,0 +1,25 @@
+{ "columns":20,
+ "image":"..\/gfx\/snowSet1.png",
+ "imageheight":112,
+ "imagewidth":320,
+ "margin":0,
+ "name":"Tundra",
+ "spacing":0,
+ "tilecount":140,
+ "tiledversion":"1.9.2",
+ "tileheight":16,
+ "tiles":[
+        {
+         "id":42,
+         "properties":[
+                {
+                 "name":"Walkable",
+                 "type":"bool",
+                 "value":true
+                }]
+        }],
+ "tilewidth":16,
+ "transparentcolor":"#ffffff",
+ "type":"tileset",
+ "version":"1.9"
+}
