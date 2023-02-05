@@ -25,3 +25,7 @@
 * A score counter based on how many enemies you have killed
 
 ### Demonstration on CEmu
+
+
+https://user-images.githubusercontent.com/45394248/216842989-fcd2a8fc-a5e9-4282-b0e8-e9e354dc7cfa.mp4
+
