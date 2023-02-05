@@ -393,13 +393,8 @@ bool isAliveFor60Seconds(Sprite *KnightSprite)
 
 bool needsToRespawn(Sprite* PlayerSprite, Sprite *KnightSprite, bool isFlipped)
 {
-
     bool knightYMatches = PlayerSprite->y == KnightSprite->y || PlayerSprite->y == KnightSprite->y + 16;
-    if (isAliveFor60Seconds(KnightSprite))
-    {
-        return true;
-    }
-    else if (isFlipped)
+    if (isFlipped)
     {
         if (KnightSprite->x == PlayerSprite->destX - 16 && knightYMatches)
         {
@@ -417,6 +412,60 @@ bool needsToRespawn(Sprite* PlayerSprite, Sprite *KnightSprite, bool isFlipped)
     }
     return false;
 }
+
+bool isSpriteOffscreen(Sprite *KnightSprite)
+{
+    if (KnightSprite->x > GFX_LCD_WIDTH || KnightSprite->x < 0)
+    {
+        return true;
+    }
+    else if (KnightSprite->y > GFX_LCD_HEIGHT || KnightSprite->y < 0)
+    {
+        return true;
+    }
+    return false;
+}
+
+double calculateAngleBetween(Sprite *sprite1, Sprite* sprite2)
+{
+    double dX = sprite2->x + (sprite2->width / 2) - sprite1->x + (sprite1->width / 2);
+    double dY = sprite2->y + (sprite2->height / 2) - sprite1->y + (sprite1->height /2);
+
+    if (dX == 0)
+    {
+        if (dY < 0)
+        {
+            return M_PI_2;
+        }
+        else
+        {
+            return -M_PI_2;
+        }
+    }
+
+    double alpha = atan(dY / dX);
+    if (dX < 0) 
+    {
+        alpha += M_PI;
+    }
+    return alpha;
+}
+
+void drawKnightIndicator(Sprite *PlayerSprite, Sprite* KnightSprite)
+{
+    double alpha = calculateAngleBetween(PlayerSprite, KnightSprite);
+
+    double dX = cos(alpha) * 16;
+    double dY = sin(alpha) * 16;
+    int circleXPos = PlayerSprite->x + (PlayerSprite->width / 2) + dX;
+    int circleYpos = PlayerSprite->y + (PlayerSprite->height / 2) + dY;
+    gfx_SetColor(34);
+    gfx_FillCircle(circleXPos, circleYpos, 2);
+    gfx_SetColor(32);
+    gfx_Circle(circleXPos, circleYpos, 2);
+}
+
+
 
 void Respawn(Tilemap *snowLevel_1, Sprite *knightSprite)
 {
@@ -441,7 +490,7 @@ void Respawn(Tilemap *snowLevel_1, Sprite *knightSprite)
     }
 }
 
-void DrawStatusText(Tilemap *snowLevel_1, Sprite *PlayerSprite, Sprite *KnightSprite ,clock_t timeSincelastUpdate)
+void DrawStatusText(Sprite *PlayerSprite, clock_t timeSincelastUpdate)
 {
     // uint8_t block_mapped, block_ptr;
     gfx_FillRectangle(0, 0, 320, 16);
@@ -469,8 +518,8 @@ void DrawStatusText(Tilemap *snowLevel_1, Sprite *PlayerSprite, Sprite *KnightSp
     // gfx_PrintInt(PlayerSprite->y, 3);
     gfx_PrintString(" -- Press mode for menu");
 
-    gfx_SetColor(14);
-    gfx_Line(PlayerSprite->x, PlayerSprite->y, KnightSprite->x, KnightSprite->y);
+    // gfx_SetColor(14);
+    // gfx_Line(PlayerSprite->x, PlayerSprite->y, KnightSprite->x, KnightSprite->y);
 }
 
 
@@ -478,7 +527,10 @@ void update(Tilemap *snowLevel1, Sprite *PlayerSprite, clock_t timeSinceLastUpda
 {
     snowLevel1->Animate();
     gfx_Tilemap(&snowLevel1->tilemap, snowLevel1->x, snowLevel1->y);
-    if (needsToRespawn(PlayerSprite, KnightSprite, false)) Respawn(snowLevel1, KnightSprite);
+    if (isAliveFor60Seconds(KnightSprite))
+    {
+        Respawn(snowLevel1, KnightSprite);
+    }
     KnightSprite->Animate();
     KnightSprite->Draw();
     PlayerSprite->Animate();
@@ -500,8 +552,13 @@ void update(Tilemap *snowLevel1, Sprite *PlayerSprite, clock_t timeSinceLastUpda
         sword->tilemap.y_loc = PlayerSprite->y - 11;
         gfx_TransparentTilemap(&sword->tilemap, sword->x, sword->y);
     }
+    if (isSpriteOffscreen(KnightSprite))
+    {
+        drawKnightIndicator(PlayerSprite, KnightSprite);
+    }
 
-    DrawStatusText(snowLevel1, PlayerSprite, KnightSprite ,timeSinceLastUpdate);
+    DrawStatusText(PlayerSprite,timeSinceLastUpdate);
+    
     gfx_SwapDraw();
 }
 
@@ -752,8 +809,9 @@ int main(void)
     
     // knightEnemy->width = knightEnemy_width;
     // knightEnemy->height = knightEnemy_height;
-    Sprite *KnightSprite = new Sprite(knightEnemy, 144, 128, knightEnemy_width, knightEnemy_height);
-
+    int startXLocation = rand() % (TILE_HEIGHT* snowLevel1_WIDTH);
+    int startYLocation = rand() % (TILE_WIDTH * snowLevel1_HEIGHT);
+    Sprite *KnightSprite = new Sprite(knightEnemy, startXLocation, startYLocation, knightEnemy_width, knightEnemy_height);
     // playerBackground->width = Player_width;
     // playerBackground->height = Player_height;
     Sprite *PlayerSprite = new Sprite(Player, PLAYER_START_X, PLAYER_START_Y, Player_width, Player_height);
@@ -788,6 +846,7 @@ int main(void)
     // int currentTile;
     kb_key_t arrows;
     kb_key_t controlButtons;
+    Respawn(snowLevel_1, KnightSprite);
     do
     {
         clockTime = clock();
@@ -809,11 +868,13 @@ int main(void)
             {
                 currentMenu = gameOverMenu;
                 menuOpen = true;
+                gfx_BlitBuffer();
             }
             if (os_GetCSC() == sk_Mode) 
             {
                 menuOpen = true; 
                 currentMenu = mainMenu;
+                gfx_BlitBuffer();
             }
             while (menuOpen)
             {

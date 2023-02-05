@@ -5,3 +5,6 @@ src/gfx/*.h
 src/gfx/*.8xv
 .DS_Store
 convimg.out
+CEdev-Tilemap-NewSnowLevel_1
+autotest.json
+
