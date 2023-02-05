@@ -12,6 +12,7 @@
 * Select the .8xp file from the newly created /bin folder and send it to a real calculator with TI connect CE or with 'send file to calc' in CEmu.
 
 ## Features
+* Graphics from free use itch.io assets
 * A world created from a tileset
 * Animated movement of the player and tilemap
 * A menu with submenus and the option to quit or continue
@@ -20,10 +21,11 @@
 * An animated attack with a sword that kills the enemy
 * If the enemy is killed, respawn it somewhere on the tilemap where the player can reach it
 * If the player cannot find or kill the enemy, respawn it in a new location
-* An indicator to show in what direction the enemy currently is
+* An indicator to show in what direction the enemy currently is, calculated with some math
+* A score counter based on how many enemies you have killed
 
 ### Demonstration on CEmu
 
 <video width="320" height="240" controls>
-  <source src="Demo.mp4" type="video/mp4">
+  <source src="Demonew.mp4" type="video/mp4">
 </video>
