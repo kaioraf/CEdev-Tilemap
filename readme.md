@@ -10,6 +10,7 @@
 
 ### Running
 * Select the .8xp file from the newly created /bin folder and send it to a real calculator with TI connect CE or with 'send file to calc' in CEmu.
+* Download the CE toolchain libraries from [Here](https://github.com/CE-Programming/libraries/releases/tag/v11.0) and send the .8xp file to the calculator the same way as the last 8xp file
 
 ## Features
 * Graphics from free use itch.io assets
