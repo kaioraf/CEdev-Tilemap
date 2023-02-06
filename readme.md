@@ -29,3 +29,7 @@
 
 https://user-images.githubusercontent.com/45394248/216842989-fcd2a8fc-a5e9-4282-b0e8-e9e354dc7cfa.mp4
 
+## Controls
+* Arrow keys for movement
+* 2nd key for sword and menu actions, on emulator this will be tab or semicolon
+* mode key to open and close the menu, home key on emulator
